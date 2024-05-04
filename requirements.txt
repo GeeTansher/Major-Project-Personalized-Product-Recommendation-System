@@ -3,7 +3,6 @@ Gunicorn
 numpy
 pandas
 torch
-json
 tensorflow
 sklearn
 pytorch_lightning
