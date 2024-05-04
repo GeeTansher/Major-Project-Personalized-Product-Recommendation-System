@@ -4,5 +4,5 @@ numpy
 pandas
 torch
 tensorflow
-sklearn
+scikit-learn
 pytorch_lightning
