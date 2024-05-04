@@ -90,7 +90,6 @@ def getRecommend():
     model = load_model(model_path)
     response_by_global = processing(data_csv_path, featureModel, data,model)
 
-    # return jsonify({"categoryProductIds":response_by_category, "category":category})
     return jsonify({"categoryProductIds":response_by_category,"globalProductIds":response_by_global})
   
 
@@ -99,31 +98,9 @@ def getRecommend():
 def sendData():
     category = request.args.get('category')
     data = pd.read_csv("./Dataset/"+category+".csv")
-    # data = data.iloc[1:21]
-    
-    # products_set = []
-
-    # for i in range(len(data)):
-    #     rating = 4
-    #     if len(str(data.iloc[i]['rating'])) == 1:
-    #         rating = int(data.iloc[i]['rating'])
-    #     product_dict = {
-    #         "product_id": data.iloc[i]['product_id'],
-    #         "product_title": data.iloc[i]['product_title'],
-    #         "product_category": data.iloc[i]['product_category'],
-    #         "rating": rating
-    #     }
-    #     products_set.append(product_dict)
-    #     if len(products_set) > 20:
-    #         break
-    
-    # print(len(products_set))
-    # print(category)
-
-    # return jsonify({"products_list": products_set})
     products_set = []
 
-    unique_product_ids = set()  # Set to keep track of unique product IDs
+    unique_product_ids = set() 
 
     for i in range(len(data)):
         rating = 4
@@ -143,7 +120,7 @@ def sendData():
             products_set.append(product_dict)
             unique_product_ids.add(product_id)
         
-        if len(products_set) > 20:
+        if len(products_set) >= 20:
             break
     
     print(len(products_set))
@@ -153,5 +130,5 @@ def sendData():
     
 
 # if __name__ == '__main__':
-#     app.run(debug=True)
+#     app.run(debug=False)
 

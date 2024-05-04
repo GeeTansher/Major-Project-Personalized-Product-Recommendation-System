@@ -56,7 +56,7 @@ def processing(data_csv_path, featureModel, list,modelRating):
     top_products_title = idToTitle(decoded_items.tolist()[:3], data)
     
     # return decoded_items.tolist()[:3],top_products_title
-    return decoded_items.tolist()[:3]
+    return top_products_title
 
 def map_column(df: pd.DataFrame, col_name: str):
     values = sorted(list(df[col_name].unique()))
@@ -86,15 +86,25 @@ def predictId(list_products, model, id2mapid, map2id):
     return [map2id[a] for a in sorted_predicted_ids[:30] if a in map2id]
 
 def idToTitle(list, data):
-    titleList = []
-    for id in range(len(list)):
+    products_set = []
+    
+    for id in list:
         for i in range(len(data.product_id)):
             if id == data.product_id[i]:
-                # print(data.iloc[i]['product_title'])
-                titleList.append(data.iloc[i]['product_title'])
+                rating = 4
+                if len(str(data.iloc[i]['rating'])) == 1:
+                    rating = int(data.iloc[i]['rating'])
+                
+                product_dict = {
+                    "product_id": data.iloc[i]['product_id'],
+                    "product_title": data.iloc[i]['product_title'],
+                    "product_category": data.iloc[i]['product_category'],
+                    "rating": rating
+                }
+                products_set.append(product_dict)
                 break
     
-    return titleList
+    return products_set
 
 class Recommender(pl.LightningModule):
     def __init__(
