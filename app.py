@@ -7,7 +7,7 @@ import json
 from tensorflow.keras.models import load_model
 
 
-api = Flask(__name__)
+app = Flask(__name__)
 
 PAD = 0
 MASK = 1
@@ -29,12 +29,12 @@ def predictId(list_products:list, model, id2mapid, map2id):
     
     return [map2id[a] for a in sorted_predicted_ids[:5] if a in map2id]
 
-@api.route('/')
+@app.route('/')
 def home():
     return "Hello world"
 
 # API ROUTING 
-@api.route('/recommend' ,methods=['POST'])
+@app.route('/recommend' ,methods=['POST'])
 def getRecommend():
     data = request.form.get('interaction')
     category = request.form.get('category')
@@ -95,7 +95,7 @@ def getRecommend():
   
 
 
-@api.route('/productslist')
+@app.route('/productslist')
 def sendData():
     category = request.args.get('category')
     data = pd.read_csv("./Dataset/"+category+".csv")
