@@ -124,6 +124,6 @@ def sendData():
     return jsonify({"products_list":products_list})
     
 
-if __name__ == '__main__':
-    api.run(debug=True)
+# if __name__ == '__main__':
+#     api.run(debug=True)
 
