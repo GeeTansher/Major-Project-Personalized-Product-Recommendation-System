@@ -101,29 +101,57 @@ def sendData():
     data = pd.read_csv("./Dataset/"+category+".csv")
     # data = data.iloc[1:21]
     
-    products_set = set()
+    # products_set = []
+
+    # for i in range(len(data)):
+    #     rating = 4
+    #     if len(str(data.iloc[i]['rating'])) == 1:
+    #         rating = int(data.iloc[i]['rating'])
+    #     product_dict = {
+    #         "product_id": data.iloc[i]['product_id'],
+    #         "product_title": data.iloc[i]['product_title'],
+    #         "product_category": data.iloc[i]['product_category'],
+    #         "rating": rating
+    #     }
+    #     products_set.append(product_dict)
+    #     if len(products_set) > 20:
+    #         break
+    
+    # print(len(products_set))
+    # print(category)
+
+    # return jsonify({"products_list": products_set})
+    products_set = []
+
+    unique_product_ids = set()  # Set to keep track of unique product IDs
 
     for i in range(len(data)):
         rating = 4
         if len(str(data.iloc[i]['rating'])) == 1:
             rating = int(data.iloc[i]['rating'])
-        products_set.add((
-            data.iloc[i]['product_id'],
-            data.iloc[i]['product_title'],
-            data.iloc[i]['product_category'],
-            rating
-        ))
-        if(len(products_set) > 20):
+
+        product_id = data.iloc[i]['product_id']
+        
+        # Check if the product ID is unique and the set does not exceed 20 items
+        if product_id not in unique_product_ids:
+            product_dict = {
+                "product_id": product_id,
+                "product_title": data.iloc[i]['product_title'],
+                "product_category": data.iloc[i]['product_category'],
+                "rating": rating
+            }
+            products_set.append(product_dict)
+            unique_product_ids.add(product_id)
+        
+        if len(products_set) > 20:
             break
     
-        products_list = list(products_set)
-        
-    print(len(products_list))
+    print(len(products_set))
     print(category)
 
-    return jsonify({"products_list":products_list})
+    return jsonify({"products_list": products_set})
     
 
 # if __name__ == '__main__':
-#     api.run(debug=True)
+#     app.run(debug=True)
 

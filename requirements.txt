@@ -6,4 +6,3 @@ torch
 tensorflow
 scikit-learn
 pytorch_lightning
-tensorrt
