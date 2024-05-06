@@ -36,9 +36,15 @@ def home():
 # API ROUTING 
 @app.route('/recommend' ,methods=['POST'])
 def getRecommend():
-    data = request.form.get('interaction')
+    dataCat = request.form.get('interactionCategory')
+    dataGlo = request.form.get('interactionGlobal')
     category = request.form.get('category')
-    data = json.loads(data)
+    user_id = int(request.form.get("userId"))
+    
+    # print(type(user_id))
+    
+    dataCat = json.loads(dataCat)
+    dataGlo = json.loads(dataGlo)
     
     # print(category)
     # print(data)
@@ -81,24 +87,26 @@ def getRecommend():
 
     
     model = load_model(model_path)
-    response_by_category = processing(data_csv_path, featureModel, data,model)
+    response_by_category = processing(data_csv_path, featureModel, dataCat, model, user_id)
     
     
     data_csv_path = "./Dataset/Global.csv"
     featureModel = "./Models/recommender-main.ckpt"
     model_path = './Models/WholeDatasetModel.h5'
     model = load_model(model_path)
-    response_by_global = processing(data_csv_path, featureModel, data,model)
+    response_by_global = processing(data_csv_path, featureModel, dataGlo, model, user_id)
 
     return jsonify({"categoryProductIds":response_by_category,"globalProductIds":response_by_global})
   
 
 
-@app.route('/productslist')
+@app.route('/sendList')
 def sendData():
     category = request.args.get('category')
+    
     data = pd.read_csv("./Dataset/"+category+".csv")
-    products_set = []
+    data = data.sample(frac=1).reset_index(drop=True)
+    products_list = []
 
     unique_product_ids = set() 
 
@@ -117,18 +125,44 @@ def sendData():
                 "product_category": data.iloc[i]['product_category'],
                 "rating": rating
             }
-            products_set.append(product_dict)
+            products_list.append(product_dict)
             unique_product_ids.add(product_id)
         
-        if len(products_set) >= 20:
+        if len(products_list) >= 20:
             break
     
-    print(len(products_set))
-    print(category)
+    # print(len(products_list))
+    # print(category)
 
-    return jsonify({"products_list": products_set})
+    return jsonify({"products_list": products_list})
+
+@app.route('/sendListCustomerId')
+def sendCustomerIdData():
+    
+    data = pd.read_csv("./Dataset/Global.csv")
+    data = data.sample(frac=1).reset_index(drop=True)
+    list = []
+
+    unique_customer_ids = set() 
+
+    for i in range(len(data)):
+
+        id = data.iloc[i]['customer_id']
+        
+        # Check if the product ID is unique and the set does not exceed 20 items
+        if id not in unique_customer_ids:
+            list.append(str(id))
+            unique_customer_ids.add(id)
+        
+        if len(list) >= 20:
+            break
+    
+    # print(len(list))
+
+    return jsonify({"id_list": list})
     
 
 if __name__ == '__main__':
+    # app.run(host="0.0.0.0", port=80)
     app.run()
 

@@ -10,7 +10,7 @@ import pytorch_lightning as pl
 PAD = 0
 MASK = 1
 
-def processing(data_csv_path, featureModel, list,modelRating):
+def processing(data_csv_path, featureModel, list, modelRating, user_id):
     data = pd.read_csv(data_csv_path)
     data, mapping, _ = map_column(data, col_name="product_id")
     model = Recommender(
@@ -32,7 +32,7 @@ def processing(data_csv_path, featureModel, list,modelRating):
     data['items'] = item_encoder.fit_transform(data['product_id'])
     items = item_encoder.fit_transform(top_products)
     # Example user and item data
-    target_user_id = 32158956
+    target_user_id = user_id
 
     user_encoder = LabelEncoder()
     user_encoder.fit([target_user_id])
@@ -50,10 +50,10 @@ def processing(data_csv_path, featureModel, list,modelRating):
     predictions = modelRating.predict([user_ids, encoded_item_ids]).flatten()
     predictions = model_predictions[encoded_user_id]
 
-    N = 3 # Number of recommendations you want to provide
+    N = 20 # Number of recommendations you want to provide
     recommended_item_indices = predictions.argsort()[::-1][:N]
     decoded_items = item_encoder.inverse_transform(recommended_item_indices)
-    top_products_title = idToTitle(decoded_items.tolist()[:3], data)
+    top_products_title = idToTitle(decoded_items.tolist()[:20], data)
     
     # return decoded_items.tolist()[:3],top_products_title
     return top_products_title
